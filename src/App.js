@@ -20,10 +20,12 @@ export default function App() {
   useEffect(() => {
     if (selectedCountry) {
       axios
-        .get(`https://crio-location-selector.onrender.com/country=${selectedCountry}/states`)
+        .get(
+          `https://crio-location-selector.onrender.com/country=${selectedCountry}/states`
+        )
         .then((res) => {
           setStates(res.data);
-          // Reset state and city when country changes
+          // Reset the state and city based on country value
           setSelectedState("");
           setCities([]);
           setSelectedCity("");
@@ -31,19 +33,19 @@ export default function App() {
         .catch((err) => console.error("Error fetching states:", err));
     }
   }, [selectedCountry]);
-
   useEffect(() => {
     if (selectedCountry && selectedState) {
       axios
-        .get(`https://crio-location-selector.onrender.com/country=${selectedCountry}/state=${selectedState}/cities`)
+        .get(
+          `https://crio-location-selector.onrender.com/country=${selectedCountry}/state=${selectedState}/cities`
+        )
         .then((res) => {
           setCities(res.data);
           setSelectedCity("");
         })
-        .catch((err) => console.error("Error fetching cities:", err));
+        .catch((err) => console.error("Error fetching states:", err));
     }
   }, [selectedCountry, selectedState]);
-
   return (
     <div className="city-selector" role="presentation">
       <h1>Select Location</h1>
@@ -53,10 +55,16 @@ export default function App() {
           onChange={(e) => setSelectedCountry(e.target.value)}
           className="dropdown"
         >
-          <option value="" disabled>Select Country</option>
-          {countries.map((country) => (
-            <option key={country} value={country}>{country}</option>
-          ))}
+          <option value="" disabled>
+            Select Country
+          </option>
+          {countries.map((country) => {
+            return (
+              <option key={country} value={country}>
+                {country}
+              </option>
+            );
+          })}
         </select>
         <select
           value={selectedState}
@@ -64,26 +72,41 @@ export default function App() {
           className="dropdown"
           disabled={!selectedCountry}
         >
-          <option value="" disabled>Select State</option>
-          {states.map((state) => (
-            <option key={state} value={state}>{state}</option>
-          ))}
+          <option value="" disabled>
+            Select State
+          </option>
+          {states.map((state) => {
+            return (
+              <option key={state} value={state}>
+                {state}
+              </option>
+            );
+          })}
         </select>
         <select
           value={selectedCity}
           onChange={(e) => setSelectedCity(e.target.value)}
           className="dropdown"
-          disabled={!selectedState}
+          disabled={!selectedCountry && !selectedState}
         >
-          <option value="" disabled>Select City</option>
-          {cities.map((city) => (
-            <option key={city} value={city}>{city}</option>
-          ))}
+          <option value="" disabled>
+            Select City
+          </option>
+          {cities.map((city) => {
+            return (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            );
+          })}
         </select>
       </div>
       {selectedCity && (
         <h2 className="result">
-          You Selected <span className="highlight">{selectedCity}</span>, <span className="highlight">{selectedState}</span>, <span className="highlight">{selectedCountry}</span>
+          You Selected <span className="highlight">{selectedCity}</span>
+          <span className="fade">
+            {" "}, {selectedState}, {selectedCountry}
+          </span>
         </h2>
       )}
     </div>
